@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SensAi - Home</title>
+    <link rel="stylesheet" href="textex.css">
+</head>
+<body>
+    <input type="file" id="pdfFile" accept=".pdf">
+    <button onclick="uploadAndSummarize()">Upload and Summarize</button>
+
+    <div id="summary"></div>
+
+    <script>
+        function uploadAndSummarize() {
+            const fileInput = document.getElementById('pdfFile');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please select a PDF file.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/summarize', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to summarize notes.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const summaryDiv = document.getElementById('summary');
+                summaryDiv.innerText = data.summary;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to summarize notes. Please try again later.');
+            });
+        }
+    </script>
+</body>
+</html>
